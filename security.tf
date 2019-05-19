@@ -18,15 +18,24 @@ resource "aws_security_group_rule" "ingress" {
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  security_group_id = aws_security_group.this[count.index].id
+  security_group_id = element(aws_security_group.this.*.id, count.index)
   cidr_blocks       = local.cidr_blocks
 }
 
-resource "aws_security_group_rule" "allow_home" {
+resource "aws_security_group_rule" "allow_home_ssh" {
   type              = "ingress"
   from_port         = 22
   to_port           = 22
   protocol          = "TCP"
-  security_group_id = aws_security_group.this[0].id
+  security_group_id = element(aws_security_group.this.*.id, 0)
+  cidr_blocks       = [var.home_ip]
+}
+
+resource "aws_security_group_rule" "allow_home_icmp" {
+  type              = "ingress"
+  from_port         = -1
+  to_port           = -1
+  protocol          = "ICMP"
+  security_group_id = element(aws_security_group.this.*.id, 0)
   cidr_blocks       = [var.home_ip]
 }
