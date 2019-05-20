@@ -27,10 +27,10 @@ module "transit_gateway" {
       Name = "Core VPC Attachment"
     },
     {
-      Name = "Stub-1 VPC Attachment"
+      Name = "Spoke-1 VPC Attachment"
     },
     {
-      Name = "Stub-2 VPC Attachment"
+      Name = "Spoke-2 VPC Attachment"
     }
   ]
 }
