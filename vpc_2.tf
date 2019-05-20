@@ -67,24 +67,3 @@ module "vpc_2" {
     Name = "Stub-1-VPC"
   }
 }
-
-resource "aws_instance" "ec2_2" {
-  ami                         = data.aws_ami.amzn2_linux.id
-  instance_type               = "t2.micro"
-  key_name                    = "aws-dev-key"
-  associate_public_ip_address = "false"
-  subnet_id                   = element(module.vpc_2.private_subnets.*.id, 0)
-  vpc_security_group_ids      = [element(aws_security_group.this.*.id, 1)]
-  user_data                   = <<EOF
-  #!/bin/bash -xe
-
-  set -o xtrace
-  sudo hostname ec2-2
-  sudo echo "ec2-2" > /etc/hostname
-EOF
-
-}
-
-output "ec2_2_private_ip" {
-  value = aws_instance.ec2_2.private_ip
-}
