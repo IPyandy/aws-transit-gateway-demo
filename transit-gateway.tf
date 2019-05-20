@@ -1,7 +1,6 @@
 module "transit_gateway" {
-  # Transit Gateway
-  source = "../modules/aws/transit-gateway"
-  # source                          = "git::ssh://git@github.com/IPyandy/terraform-aws-modules.git//transit-gateway?ref=terraform-0.12"
+  ## Transit Gateway
+  source = "git::ssh://git@github.com/IPyandy/terraform-aws-modules.git//transit-gateway?ref=terraform-0.12"
 
   create_transit_gateway          = true
   transit_gateway_description     = "Transit Gateway Demo"
@@ -16,10 +15,14 @@ module "transit_gateway" {
     Name = "Transit-Gateway-01"
   }
 
-  # VPC Attachments
-  vpc_ids                             = concat(local.core_vpc_ids, local.spoke_vpc_ids)
-  subnet_ids                          = [local.core_private_subnet_ids, local.spoke_1_subnet_ids, local.spoke_2_subnet_ids]
-  ipv6_support                        = "disable"
+  ## VPC Attachments
+  vpc_ids      = concat(local.core_vpc_ids, local.spoke_vpc_ids)
+  subnet_ids   = [local.core_private_subnet_ids, local.spoke_1_subnet_ids, local.spoke_2_subnet_ids]
+  ipv6_support = "disable"
+
+  ### Because default route table association and propagation are set a the
+  ### transit gateway level, these two settings are redundant, but its nice
+  ### to be verbose sometimes to declare intent.
   associate_default_route_table       = true
   vpc_default_route_table_propagation = true
   vpc_attachment_tags = [
