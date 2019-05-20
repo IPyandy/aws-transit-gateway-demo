@@ -16,9 +16,9 @@ resource "aws_network_interface" "core" {
   ], 0)
 }
 
-resource "aws_network_interface" "stubs" {
-  count             = length(local.stub_subnet_ids)
-  subnet_id         = element(local.stub_subnet_ids, count.index)
+resource "aws_network_interface" "spokes" {
+  count             = length(local.spoke_subnet_ids)
+  subnet_id         = element(local.spoke_subnet_ids, count.index)
   security_groups   = list(element(aws_security_group.this.*.id, count.index + 1))
   private_ips       = list(element(["10.245.128.10", "10.246.128.10"], count.index))
   source_dest_check = true
@@ -86,7 +86,7 @@ output "ec2_1b_private_ip" {
 value = aws_instance.ec2_1b.private_ip
 }
 
-## Stub VPC Instances
+## Spoke VPC Instances
 
 resource "aws_instance" "ec2_2" {
   ami           = data.aws_ami.amzn2_linux.id
@@ -94,7 +94,7 @@ resource "aws_instance" "ec2_2" {
   key_name      = "aws-dev-key"
 
   network_interface {
-    network_interface_id = aws_network_interface.stubs[0].id
+    network_interface_id = aws_network_interface.spokes[0].id
     device_index         = 0
   }
 
@@ -118,7 +118,7 @@ resource "aws_instance" "ec2_3" {
   key_name = "aws-dev-key"
 
   network_interface {
-    network_interface_id = aws_network_interface.stubs[1].id
+    network_interface_id = aws_network_interface.spokes[1].id
     device_index = 0
   }
 

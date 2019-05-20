@@ -17,8 +17,8 @@ module "transit_gateway" {
   }
 
   # VPC Attachments
-  vpc_ids                             = concat(local.core_vpc_ids, local.stub_vpc_ids)
-  subnet_ids                          = [local.core_private_subnet_ids, local.stub1_subnet_ids, local.stub2_subnet_ids]
+  vpc_ids                             = concat(local.core_vpc_ids, local.spoke_vpc_ids)
+  subnet_ids                          = [local.core_private_subnet_ids, local.spoke_1_subnet_ids, local.spoke_2_subnet_ids]
   ipv6_support                        = "disable"
   associate_default_route_table       = true
   vpc_default_route_table_propagation = true
@@ -48,9 +48,9 @@ resource "aws_route" "core_routes" {
   transit_gateway_id     = module.transit_gateway.transit_gateway_id
 }
 
-resource "aws_route" "stub_default_routes" {
-  count                  = length(local.stub_priv_route_table_ids)
-  route_table_id         = local.stub_priv_route_table_ids[count.index]
+resource "aws_route" "spoke_default_routes" {
+  count                  = length(local.spoke_priv_route_table_ids)
+  route_table_id         = local.spoke_priv_route_table_ids[count.index]
   destination_cidr_block = "0.0.0.0/0"
   transit_gateway_id     = module.transit_gateway.transit_gateway_id
 }
