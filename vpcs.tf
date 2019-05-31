@@ -1,4 +1,6 @@
 provider "aws" {
+  version = ">= 2.0"
+  profile = "cloudart-dev"
 }
 
 ## Core VPC
@@ -58,7 +60,7 @@ module "core_vpc" {
   #############################################################################
 
   create_inet_gw = true
-  num_nat_gws    = 1
+  num_nat_gws    = 0
 
   #############################################################################
   ### FLOWLOGS

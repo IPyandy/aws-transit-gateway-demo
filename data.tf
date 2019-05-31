@@ -41,3 +41,7 @@ data "template_file" "cloud_config" {
 data "local_file" "ssh_key" {
   filename = pathexpand(var.priv_ssh_key_path)
 }
+
+data "aws_vpc" "test" {
+  id = "vpc-7b69f201"
+}
