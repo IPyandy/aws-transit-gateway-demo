@@ -19,3 +19,11 @@ variable "domain_name" {
 variable "hostnames" {
   default = ["ec2-1a-ssh-bastion", "ec2-1b", "ec2-2", "ec2-3"]
 }
+
+variable "access_key" {
+  default = ""
+}
+
+variable "secret_key" {
+  default = ""
+}

@@ -32,7 +32,49 @@ resource "aws_network_interface" "spokes" {
   ], count.index)
 }
 
+resource "aws_network_interface" "fortigate" {
+  count             = length(local.core_subnet_ids)
+  subnet_id         = local.core_subnet_ids[count.index]
+  security_groups   = [local.core_sg_ids[0]]
+  private_ips       = [element(["10.244.0.11", "10.244.128.12"], count.index)]
+  source_dest_check = false
+  tags = element([
+    {
+      Name = "fortigate-public"
+    },
+    {
+      Name = "fortigate-private"
+    },
+  ], count.index)
+}
+
 ## Core VPC Instances
+
+resource "aws_instance" "fortigate" {
+  ami           = data.aws_ami.fortigate.id
+  instance_type = "t2.small"
+  key_name      = var.ssh_key_name
+
+  network_interface {
+    network_interface_id = aws_network_interface.fortigate[0].id
+    device_index         = 0
+  }
+  network_interface {
+    network_interface_id = aws_network_interface.fortigate[1].id
+    device_index         = 1
+  }
+
+  tags = {
+    Name = "Fortigate-Dev"
+  }
+}
+
+output "fortigate_ips" {
+  value = {
+    forti_public  = aws_instance.fortigate.public_ip,
+    forti_private = aws_instance.fortigate.private_ip
+  }
+}
 
 resource "aws_instance" "core_instances" {
   count            = 2

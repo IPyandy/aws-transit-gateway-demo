@@ -42,6 +42,16 @@ data "local_file" "ssh_key" {
   filename = pathexpand(var.priv_ssh_key_path)
 }
 
+data "aws_ami" "fortigate" {
+  most_recent = true
+  owners      = ["679593333241"]
+
+  filter {
+    name   = "name"
+    values = ["FortiGate-VM64-AWSONDEMAND*"]
+  }
+}
+
 data "aws_vpc" "test" {
   id = "vpc-7b69f201"
 }
